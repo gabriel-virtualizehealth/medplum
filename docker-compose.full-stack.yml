@@ -119,3 +119,24 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
+    medplum-provider:
+    build:
+      context: ./medplum-provider
+      dockerfile: Dockerfile
+    image: gabriel-virtualizehealth/medplum-provider:latest
+    restart: always
+    depends_on:
+      medplum-server:
+        condition: service_healthy
+    ports:
+      - '3010:3010'
+    environment:
+      MEDPLUM_BASE_URL: 'http://medplum-server:8103/'
+      PROVIDER_PORT: 3010
+      NODE_ENV: production
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3010']
+      interval: 10s
+      timeout: 5s
+      retries: 5
